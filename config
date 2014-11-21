@@ -1,0 +1,115 @@
+#
+# Config parameters
+#
+# --hostname
+#   The IP address or hostname of the device. This option could be used only under section [host].
+#
+# --group
+#   The group used for host. This option could be used only under section [host].
+#
+# --username
+#   Username used to connect to the device. Default value: ''
+#
+# --password
+#   Password uset to connect to the device. Default value: ''
+#
+# --enable_username
+#   Enable username to connect to the device. Could be empty if not needed. Default value: ''
+#
+# --enable_password
+#   Enable password to connect to the device. Could be empty if not needed. Default value: ''
+#
+# --type
+#   The device type. The choices are: ios, asa. Default value: ios
+#
+# --archive_location
+#   The location for the outputs that need to be saved. Default value: .
+#
+# --save_running_config
+#   Use this option if need to save running configuration to startup configuration. The options are True or False. Default value: False
+#
+# --get_running_config
+#   Use this option if need to get running configuration from the device and save to archive_location. The options are True or False. Default value: False
+#
+# --running_config_prefix
+#   The name of the file that will be used to save running configuration to the archive_location. You can use the &h and &d option in the filename. The &h option will be replaced with the hostname and &d will be replaced with current date. Default value: run_&h_&d
+#   
+# --get_startup_config
+#   Use this option if need to get startup configuration from the device and save to archive_location. The options are True or False. Default value: False
+#
+# --startup_config_prefix
+#   The name of the file that will be used to save startup configuration to the archive_location. You can use the &h and &d option in the filename. The &h option will be replaced with the hostname and &d will be replaced with current date. Default value: start_&h_&d
+#
+# --get_vlan_list
+#   Use this option if need to get vlan list from the device and save to archive_location. The options are True or False. Default value: False
+#
+# --vlan_list_prefix
+#   The name of the file that will be used to save vlan list to the archive_location. You can use the &h and &d option in the filename. The &h option will be replaced with the hostname and &d will be replaced with current date. Default value: vlan_&h_&d
+#
+#
+#
+# Three different sections could be used in the configuration file. These are [default], [group GROUP_NAME] and [host HOST]. 
+# The [host] section is used to define configuration for the specific host. The hostname and group options are mandatory. If no group is defined use default. All options are specific to the host. If specific option is not defined, the option for the group is used.
+# The [group] section is used to get configuration options for multiple hosts. If configuration option is not defined under group section, the configuration option from the default section is used.
+# The [default] section is used to configure option for all hosts in the configuration file. If configuration option is not defined, the default value will be used.
+#
+# Example:
+#
+# [default]
+# username: root
+# password: pass
+# archive_location: /home/user/
+# running_config_prefix: r_&h_&d
+#
+# [group group1]
+# get_running_config:True
+# 
+#
+# [host router1]
+# group:group1
+# hostname:192.168.1.1
+#
+# [host router2]
+# group: default
+# hostname: router2.example.com
+# archive_location: /var/log/config
+# get_startup_config: True
+#
+#
+# The result of the configuration file will be:
+# router1:
+# -hostname: 192.168.1.1
+# -username: root
+# -password: pass
+# -enable_username: ''
+# -enable_password: ''
+# -type: ios
+# -archive_location: /home/user/
+# -save_running_config: False
+# -get_running_config: True
+# -running_config_prefix: r_&h_&d
+# -get_startup_config: False
+# -startup_config_prefix: start_&h_&d
+# -get_vlan_list: False
+# -vlan_list_prefix: vlan_&h_&d
+# 
+# router2:
+# -hostname: router2.example.com
+# -username: root
+# -password: pass
+# -enable_username: ''
+# -enable_password: ''
+# -type: ios
+# -archive_location: /var/log/config
+# -save_running_config: False
+# -get_running_config: False
+# -running_config_prefix: r_&h_&d
+# -get_startup_config: True
+# -startup_config_prefix: start_&h_&d
+# -get_vlan_list: False
+# -vlan_list_prefix: vlan_&h_&d
+#
+#
+
+
+
