@@ -342,17 +342,19 @@ if __name__ == "__main__":
 
     for host in hosts:
         host_service = IosServices(host['hostname'],host['username'],host['password'],host['enable_username'],host['enable_password'])
-        host_service.connect_to_device()
-
+        try:
+            host_service.connect_to_device()
+        except ConnectionError as err:
+            print str(err)
+            continue
+        except AuthenticationError as err:
+            print str(err) + ' Operation: %s, Host: %s' %('Save running config', host['hostname'])
+            continue
         if host['save_running_config']:
             if config_parameters['type'] == 'ios':
                 try:
                     host_service.save_configuration()
                     print "The running-config on the host %s was successfully saved to startup-config." %host['hostname']
-                except ConnectionError as err:
-                    print str(err) + ' Operation: %s' %'Save running config'
-                except AuthenticationError as err:
-                    print str(err) + ' Operation: %s, Host: %s' %('Save running config', host['hostname'])
                 except CommandError as err:
                     print str(err) + ' Operation: %s, Host: %s' %('Save running config', host['hostname'])
         if host['get_running_config']:
@@ -362,10 +364,6 @@ if __name__ == "__main__":
                     try:
                         host_service.get_running_config(save_to_file_system=True, path = file_path)
                         print "Running-config for host %s was successfully saved to the %s." %(host['hostname'],file_path)
-                    except ConnectionError as err:
-                        print str(err) + ' Operation: %s' %'Get running config'
-                    except AuthenticationError as err:
-                        print str(err) + ' Operation: %s, Host: %s' %('Get running config', host['hostname'])
                     except CommandError as err:
                         print str(err) + ' Operation: %s, Host: %s' %('Get running config', host['hostname'])
         if host['get_startup_config']:
@@ -376,10 +374,6 @@ if __name__ == "__main__":
                     try:
                         host_service.get_startup_config(save_to_file_system=True, path = file_path)
                         print "Startup-config for host %s was successfully saved to the %s." %(host['hostname'],file_path)
-                    except ConnectionError as err:
-                        print str(err) + ' Operation: %s' %'Get startup config'
-                    except AuthenticationError as err:
-                        print str(err) + ' Operation: %s, Host: %s' %('Get startup config', host['hostname'])
                     except CommandError as err:
                         print str(err) + ' Operation: %s, Host: %s' %('Get startup config', host['hostname'])
         host_service.disconnect_from_device()
