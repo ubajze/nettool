@@ -343,6 +343,7 @@ if __name__ == "__main__":
     for host in hosts:
         host_service = IosServices(host['hostname'],host['username'],host['password'],host['enable_username'],host['enable_password'])
         host_service.connect_to_device()
+
         if host['save_running_config']:
             if config_parameters['type'] == 'ios':
                 try:
