@@ -40,13 +40,15 @@
 # --startup_config_prefix
 #   The name of the file that will be used to save startup configuration to the archive_location. You can use the &h and &d option in the filename. The &h option will be replaced with the hostname and &d will be replaced with current date. Default value: start_&h_&d
 #
-# --get_vlan_list
-#   Use this option if need to get vlan list from the device and save to archive_location. The options are True or False. Default value: False
-#
-# --vlan_list_prefix
-#   The name of the file that will be used to save vlan list to the archive_location. You can use the &h and &d option in the filename. The &h option will be replaced with the hostname and &d will be replaced with current date. Default value: vlan_&h_&d
+# --custom_cmd
+#   The custom command to be executed on the remote device and saved to the archive_location. The custom_cmd must be in format "(command_1,output_prefix_1):(command_2,output_prefix_2):...". The &h and &d variables can be used for prefix name. Default value: None
 #
 #
+# --keyring
+#   The password will be extracted from the keyring. If only enable password is needed to access privilege mode, you can create fake username and store enable password under that user. Default value: False
+#   The keyring package is located on https://pypi.python.org/pypi/keyring. 
+#   Use keyring --help to check how to add password to the keyring.
+#   
 #
 # Three different sections could be used in the configuration file. These are [default], [group GROUP_NAME] and [host HOST]. 
 # The [host] section is used to define configuration for the specific host. The hostname and group options are mandatory. If no group is defined use default. All options are specific to the host. If specific option is not defined, the option for the group is used.
@@ -62,12 +64,13 @@
 # running_config_prefix: r_&h_&d
 #
 # [group group1]
-# get_running_config:True
+# get_running_config: True
 # 
 #
 # [host router1]
-# group:group1
-# hostname:192.168.1.1
+# group: group1
+# hostname: 192.168.1.1
+# custom_cmd: (show vlan-switch,vlan_&d),(show interface fastethernet 0/0,if_output_&d)
 #
 # [host router2]
 # group: default
@@ -90,8 +93,7 @@
 # -running_config_prefix: r_&h_&d
 # -get_startup_config: False
 # -startup_config_prefix: start_&h_&d
-# -get_vlan_list: False
-# -vlan_list_prefix: vlan_&h_&d
+# -custom_cmd: (show vlan-switch,vlan_&d):(show interface fastethernet 0/0,if_output_&d)
 # 
 # router2:
 # -hostname: router2.example.com
@@ -106,8 +108,7 @@
 # -running_config_prefix: r_&h_&d
 # -get_startup_config: True
 # -startup_config_prefix: start_&h_&d
-# -get_vlan_list: False
-# -vlan_list_prefix: vlan_&h_&d
+# -custom_cmd: None
 #
 #
 
