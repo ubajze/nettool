@@ -107,7 +107,9 @@ class HostConnection:
             self.conn.auto_app_authorize(self.account1)
         except:
             raise AuthenticationError(msg_authentication_failed)
+        self.conn.execute('configure terminal')
         self.conn.execute('pager 0')
+        self.conn.execute('exit')
 
     def execute_command(self,command):
         try:
