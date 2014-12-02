@@ -54,7 +54,7 @@ class Credentials:
         elif self.password == None:
             raise NoPasswordFound(no_password_found_msg)
         else:
-            keyring.set_password('system',username,password)
+            keyring.set_password('system',self.username,self.password)
         return self.username,self.password
 
     @classmethod
@@ -95,6 +95,20 @@ class HostConnection:
             raise AuthenticationError(msg_authentication_failed)
         self.conn.execute('terminal length 0')
 
+    def connect_to_device_asa(self):
+        self.conn = SSH2()
+        self.conn.set_driver('ios')
+        try:
+            self.conn.connect(self.host)
+        except:
+            raise ConnectionError(msg_unable_to_connect %self.host)
+        try:
+            self.conn.authenticate(self.account)
+            self.conn.auto_app_authorize(self.account1)
+        except:
+            raise AuthenticationError(msg_authentication_failed)
+        self.conn.execute('pager 0')
+
     def execute_command(self,command):
         try:
             self.conn.execute(command)
@@ -111,22 +125,26 @@ class HostConnection:
         self.conn.close()
 
 
-class IosServices:
+class Services:
 
-    def __init__(self, host, username = None, password = None, enable_username = None, enable_password = None):
+    def __init__(self, host, username = None, password = None, enable_username = None, enable_password = None, device_type = 'ios'):
         self.host = host
         self.username = username
         self.password = password
         self.enable_username = enable_username
         self.enable_password = enable_password
         self.connection = None
+        self.device_type = device_type
 
     def connect_to_device(self):
         self.connection = HostConnection(self.host)
         self.connection.login_account(self.username,self.password)
         if self.enable_password:
             self.connection.enable_account(self.enable_username,self.enable_password)
-        self.connection.connect_to_device_ios()
+        if self.device_type == 'ios':
+            self.connection.connect_to_device_ios()
+        elif self.device_type == 'asa':
+            self.connection.connect_to_device_asa()
         return self.connection
 
     def disconnect_from_device(self):
@@ -366,7 +384,7 @@ if __name__ == "__main__":
                     print_log(str(err),host['hostname'])
 
     for host in hosts:
-        host_service = IosServices(host['hostname'],host['username'],host['password'],host['enable_username'],host['enable_password'])
+        host_service = Services(host['hostname'],host['username'],host['password'],host['enable_username'],host['enable_password'],host['type'])
         try:
             host_service.connect_to_device()
         except ConnectionError as err:
