@@ -150,8 +150,11 @@ class Services:
         return self.connection
 
     def disconnect_from_device(self):
-        self.connection.disconnect_from_device()
-
+        if self.device_type == 'ios':
+            self.connection.disconnect_from_device()
+        elif self.device_type == 'asa':
+            command_list = ['configure terminal','pager 24','exit']
+            self.connection.disconnect_from_device()
 
     def execute_multiple_commands(self,command_list):
         response_list = []
@@ -396,7 +399,7 @@ if __name__ == "__main__":
             print_log(str(err),host['hostname'])
             continue
         if host['save_running_config']:
-            if config_parameters['type'] == 'ios':
+            if host['type'] == 'ios' or host['type'] == 'asa':
                 try:
                     host_service.save_configuration()
                     error_msg = "The running-config on the host %s was successfully saved to startup-config." %host['hostname']
@@ -407,7 +410,7 @@ if __name__ == "__main__":
         if host['get_running_config']:
             file_path = get_file_path(host['archive_location'],get_filename(host['running_config_prefix'],host['hostname']))
             if file_path:
-                if config_parameters['type'] == 'ios':
+                if host['type'] == 'ios' or host['type'] == 'asa':
                     try:
                         host_service.get_running_config(save_to_file_system=True, path = file_path)
                         error_msg = "Running-config for host %s was successfully saved to the %s." %(host['hostname'],file_path)
@@ -418,7 +421,7 @@ if __name__ == "__main__":
         if host['get_startup_config']:
             file_path = get_file_path(host['archive_location'],get_filename(host['startup_config_prefix'],host['hostname']))
             if file_path:
-                if config_parameters['type'] == 'ios':
+                if host['type'] == 'ios' or host['type'] == 'asa':
                     try:
                         host_service.get_startup_config(save_to_file_system=True, path = file_path)
                         error_msg = "Startup-config for host %s was successfully saved to the %s." %(host['hostname'],file_path)
